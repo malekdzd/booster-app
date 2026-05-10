@@ -5,42 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background: #0e0e0e; color: white; text-align: center; font-family: Arial; padding: 20px; }
-        .card { background: #1c1c1c; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #0088cc; }
-        button { background: #0088cc; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px; width: 100%; cursor: pointer; }
-        .task { display: flex; justify-content: space-between; align-items: center; background: #252525; padding: 10px; border-radius: 10px; margin-top: 10px; }
+        body { background: #0e0e0e; color: white; text-align: center; font-family: Arial; padding: 15px; }
+        .card { background: #1c1c1c; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #0088cc; }
+        .score { font-size: 28px; color: #0088cc; font-weight: bold; margin: 10px 0; }
+        button { background: #0088cc; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; width: 100%; cursor: pointer; margin-top: 10px; font-weight: bold; }
+        .withdraw-btn { background: #28a745; }
+        .task-box { display: flex; justify-content: space-between; align-items: center; background: #252525; padding: 10px; border-radius: 8px; margin-top: 10px; }
+        .task-box button { width: auto; margin-top: 0; padding: 5px 15px; }
     </style>
 </head>
 <body>
+
     <div class="card">
-        <h3>رصيدك: <span id="balance">0</span> 💰</h3>
+        <h3>مرحباً <span id="user-name"></span></h3>
+        <div class="score" id="balance">0</div>
+        <p>نقطة 💰</p>
     </div>
 
     <div class="card">
-        <h4>📋 المهام المتاحة</h4>
-        <div class="task">
+        <h4>📋 مهمة الاشتراك</h4>
+        <div class="task-box">
             <span>اشترك في القناة 🚀</span>
-            <button onclick="doTask()" style="width: auto;">Check</button>
+            <button onclick="doTask()">Check</button>
         </div>
     </div>
+
+    <div class="card">
+        <h4>👥 نظام الإحالة</h4>
+        <p>اربح 500 نقطة عن كل صديق!</p>
+        <button onclick="shareInvite()">ارسل رابط الدعوة 🔗</button>
+    </div>
+
+    <button class="withdraw-btn" onclick="withdraw()">💳 سحب الأرباح</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+        
+        // جلب اسم المستخدم ورصيده
+        document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name;
         let balance = localStorage.getItem('userBalance') || 0;
         document.getElementById('balance').innerText = balance;
 
+        // دالة مهمة الاشتراك
         function doTask() {
-            // توجيه المستخدم للقناة
-            window.open("https://t.me/RealProfitVault", "_blank");
-            
-            // إضافة نقاط وهمية (لأن التحقق البرمجي الحقيقي يحتاج سيرفر، لكن هذا كافٍ للبداية)
+            tg.openTelegramLink("https://t.me/RealProfitVault");
             setTimeout(() => {
                 balance = parseInt(balance) + 100;
-                document.getElementById('balance').innerText = balance;
-                localStorage.setItem('userBalance', balance);
-                alert("تم التحقق! حصلت على 100 نقطة ✅");
+                updateBalance();
+                tg.showAlert("✅ تم التحقق وإضافة 100 نقطة!");
             }, 2000);
+        }
+
+        // دالة رابط الدعوة
+        function shareInvite() {
+            let inviteLink = "https://t.me/" + tg.initDataUnsafe.bot.username + "/app?startapp=ref" + tg.initDataUnsafe.user.id;
+            let shareUrl = "https://t.me/share/url?url=" + encodeURIComponent(inviteLink) + "&text=" + encodeURIComponent("اشترك في هذا البوت واربح مكافآت! 💰");
+            tg.openTelegramLink(shareUrl);
+        }
+
+        // دالة سحب الأرباح
+        function withdraw() {
+            if(balance < 5000) {
+                tg.showPopup({ title: "عذراً", message: "يجب أن يكون رصيدك 5000 نقطة على الأقل للسحب.", buttons: [{type: "ok"}] });
+            } else {
+                tg.showAlert("📩 تم إرسال طلبك للإدارة، انتظر تواصلنا!");
+            }
+        }
+
+        function updateBalance() {
+            document.getElementById('balance').innerText = balance;
+            localStorage.setItem('userBalance', balance);
         }
     </script>
 </body>
