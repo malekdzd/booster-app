@@ -3,37 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booster Tasks</title>
-    <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { background: #0e0e0e; color: white; text-align: center; font-family: Arial; padding: 20px; }
+        .card { background: #1c1c1c; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #0088cc; }
+        button { background: #0088cc; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px; width: 100%; cursor: pointer; }
+        .task { display: flex; justify-content: space-between; align-items: center; background: #252525; padding: 10px; border-radius: 10px; margin-top: 10px; }
+    </style>
 </head>
 <body>
-    <div id="app">
-        <h1>مرحباً بك، <span id="username">المستخدم</span>!</h1>
-        <div class="score-container">
-            <p>رصيدك الحالي</p>
-            <h2 id="balance">0</h2>
-            <span>نقطة 💰</span>
-        </div>
-        
-        <button id="main-button" onclick="mine()">اضغط لجمع النقاط 🚀</button>
-        
-        <div class="menu">
-            <button onclick="showTab('tasks')">📋 المهام</button>
-            <button onclick="showTab('friends')">👥 الأصدقاء</button>
+    <div class="card">
+        <h3>رصيدك: <span id="balance">0</span> 💰</h3>
+    </div>
+
+    <div class="card">
+        <h4>📋 المهام المتاحة</h4>
+        <div class="task">
+            <span>اشترك في القناة 🚀</span>
+            <button onclick="doTask()" style="width: auto;">Check</button>
         </div>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-        document.getElementById("username").innerText = tg.initDataUnsafe.user.first_name;
+        let balance = localStorage.getItem('userBalance') || 0;
+        document.getElementById('balance').innerText = balance;
 
-        let points = 0;
-        function mine() {
-            points += 1;
-            document.getElementById("balance").innerText = points;
-            tg.HapticFeedback.impactOccurred('medium'); // اهتزاز بسيط عند الضغط
+        function doTask() {
+            // توجيه المستخدم للقناة
+            window.open("https://t.me/RealProfitVault", "_blank");
+            
+            // إضافة نقاط وهمية (لأن التحقق البرمجي الحقيقي يحتاج سيرفر، لكن هذا كافٍ للبداية)
+            setTimeout(() => {
+                balance = parseInt(balance) + 100;
+                document.getElementById('balance').innerText = balance;
+                localStorage.setItem('userBalance', balance);
+                alert("تم التحقق! حصلت على 100 نقطة ✅");
+            }, 2000);
         }
     </script>
 </body>
