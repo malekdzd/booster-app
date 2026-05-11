@@ -1154,7 +1154,8 @@ body {
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
+<script> const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
 // ─── TAB SWITCHING ────────────────────────────────────
 function switchTab(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
