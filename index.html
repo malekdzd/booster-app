@@ -3,109 +3,398 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>BoosterTasks</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --bg: #0c0d10; --card: #16171d; --text: #fff; --accent: #f7b500; --sub: #8b8e9b; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding-bottom: 80px; }
-        .container { padding: 15px; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .top-bar { display: flex; justify-content: space-between; padding: 15px; background: var(--card); border-bottom: 1px solid #2a2c35; }
-        .coins { color: var(--accent); font-weight: bold; border: 1px solid var(--accent); padding: 2px 10px; border-radius: 20px; }
-        .card { background: var(--card); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid #2a2c35; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: var(--card); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #2a2c35; }
-        .nav-item { color: var(--sub); font-size: 11px; text-align: center; flex: 1; cursor: pointer; }
-        .nav-item.active { color: var(--accent); }
-        button { background: var(--accent); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; }
-        .lang-btn { background: #2a2c35; color: #fff; border: 1px solid #444; padding: 5px; border-radius: 5px; margin: 5px; cursor: pointer; width: 30%; }
-        [dir="rtl"] { text-align: right; }
+        /* تعريف المتغيرات للألوان - تطابق ExoTap */
+        :root {
+            --bg-color: #0c0d10;
+            --card-bg: #16171d;
+            --text-main: #ffffff;
+            --text-sub: #8b8e9b;
+            --accent: #f7b500; /* اللون الأصفر الذهبي المميز */
+            --border: #2a2c35;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 70px; /* مساحة للشريط السفلي */
+            overflow-x: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        /* ----- شريط المعلومات العلوي ----- */
+        .top-info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: #2a2c35; /* خلفية افتراضية */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .user-id {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
+        .balance-badges {
+            display: flex;
+            gap: 5px;
+        }
+
+        .badge-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 5px 12px;
+            border-radius: 20px;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ----- البطاقات الرئيسية (Cards) ----- */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .card-header-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-sub);
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+
+        .progress-track {
+            height: 8px;
+            background-color: #2a2c35;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f7b500 0%, #ff8a00 100%);
+            width: 75%; /* يمكنك تغيير هذه القيمة برمجياً */
+            border-radius: 4px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-supply-label {
+            color: var(--text-sub);
+            font-size: 11px;
+        }
+
+        .total-supply-value {
+            color: var(--accent);
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        /* ----- صف أزرار الإجراءات (Actions) ----- */
+        .action-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .action-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-btn:active {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .action-icon {
+            font-size: 22px;
+            color: var(--accent);
+        }
+
+        .action-label {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ----- قائمة المتصدرين (Leaderboard) ----- */
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-leads {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rank-number {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent);
+            width: 25px;
+            text-align: center;
+        }
+
+        .list-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #2a2c35;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .list-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .list-subtitle {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
+        .points-badge {
+            background: rgba(247, 181, 0, 0.1);
+            border: 1px solid rgba(247, 181, 0, 0.3);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 12px;
+            padding: 5px 12px;
+            border-radius: 12px;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        /* ----- شريط التنقل السفلي ----- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            color: var(--text-sub);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: color 0.2s;
+            text-align: center;
+            flex: 1;
+            padding: 10px 0;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* إخفاء محتوى الألسنة بشكل افتراضي */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
     </style>
 </head>
 <body>
-    <div class="top-bar">
-        <b id="app-name">BoosterTasks</b>
-        <div class="coins">💰 <span id="balance">0</span></div>
+
+    <div class="top-info-bar">
+        <div class="profile-section">
+            <div class="avatar-circle" id="user-avatar">?</div>
+            <div class="user-info">
+                <span class="user-name" id="user-name">Loading...</span>
+                <span class="user-id" id="user-id">ID: -------</span>
+            </div>
+        </div>
+        <div class="balance-badges">
+            <div class="badge-item"><span>💎</span> 0</div>
+            <div class="badge-item"><span>💰</span> <span id="balance-value">0</span></div>
+        </div>
     </div>
 
     <div class="container">
+
         <div id="tab-home" class="tab-content active">
             <div class="card">
-                <h2 id="h-welcome">Welcome</h2>
-                <p id="h-desc" style="color: var(--sub);">Earn points daily!</p>
-            </div>
-            <button onclick="switchTab('tasks')" id="h-btn">Start</button>
-        </div>
-        <div id="tab-tasks" class="tab-content">
-            <h3 id="t-title">Tasks</h3>
-            <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:10px;">
-                <span id="t-name">Join Channel</span>
-                <button onclick="doTask()" style="width:auto;">Check</button>
-            </div>
-        </div>
-        <div id="tab-profile" class="tab-content">
-            <div class="card" style="text-align:center;">
-                <div id="u-init" style="width:60px; height:60px; background:var(--accent); border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; color:#000; font-weight:bold; font-size:24px;">?</div>
-                <h3 id="u-name">User</h3>
-                <div style="margin:10px 0;">
-                    <button class="lang-btn" onclick="setLang('en')">EN</button>
-                    <button class="lang-btn" onclick="setLang('ar')">AR</button>
-                    <button class="lang-btn" onclick="setLang('ru')">RU</button>
+                <div class="card-header-icon">📉 TRADING EPOCH 🟢</div>
+                <div class="card-title">EP (Epoch Points) are limited.</div>
+                <p style="color: var(--text-sub); font-size: 12px; line-height: 1.4;">Earn while you can. Convert EP to TON at any time!</p>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-header">
+                        <span>Farmed</span>
+                        <span>0.00%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="farm-progress"></div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <span class="total-supply-label">Total EP Supply</span>
+                    <span class="total-supply-value">20,000,000 EP</span>
                 </div>
             </div>
+
+            <div class="action-row">
+                <div class="action-btn" onclick="switchTab('refer')">
+                    <span class="action-icon">👥</span>
+                    <span class="action-label">Refer</span>
+                </div>
+                <div class="action-btn" onclick="showConvert()">
+                    <span class="action-icon">🔄</span>
+                    <span class="action-label">Convert</span>
+                </div>
+                <div class="action-btn" onclick="showWithdraw()">
+                    <span class="action-icon">💳</span>
+                    <span class="action-label">Withdraw</span>
+                </div>
+            </div>
+
+            <h4>🏆 Top Leaderboard</h4>
+            <div class="list-item">
+                <div class="list-leads">
+                    <div class="rank-number">#1</div>
+                    <div class="list-avatar">T</div>
+                    <div class="item-info">
+                        <div class="list-title">Tamim OWNER</div>
+                        <div class="list-subtitle">2295 EP earned</div>
+                    </div>
+                </div>
+                <div class="points-badge">🏆 100,000 EP</div>
+            </div>
         </div>
-    </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home')" id="n-home">🏠<br><span id="l-home">Home</span></div>
-        <div class="nav-item" onclick="switchTab('tasks')" id="n-tasks">📋<br><span id="l-tasks">Tasks</span></div>
-        <div class="nav-item" onclick="switchTab('profile')" id="n-profile">👤<br><span id="l-profile">Profile</span></div>
-    </div>
+        <div id="tab-tasks" class="tab-content">
+            <h3>📋 Tasks</h3>
+            <p style="color: var(--text-sub);">Complete tasks to earn more EP. Coming soon!</p>
+        </div>
 
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-        let balance = localStorage.getItem('bal') || 0;
-        let lang = localStorage.getItem('l') || 'en';
-
-        const dict = {
-            en: { w: "Welcome", d: "Earn points daily!", s: "Start", t: "Tasks", tn: "Join Channel", p: "Profile", h: "Home", dir: "ltr" },
-            ar: { w: "مرحباً بك", d: "اجمع النقاط يومياً!", s: "ابدأ", t: "المهام", tn: "اشترك في القناة", p: "حسابي", h: "الرئيسية", dir: "rtl" },
-            ru: { w: "Привет", d: "Зарабатывай баллы!", s: "Пуск", t: "Задания", tn: "Подписаться", p: "Профиль", h: "Главная", dir: "ltr" }
-        };
-
-        function setLang(l) {
-            lang = l; localStorage.setItem('l', l);
-            document.body.dir = dict[l].dir;
-            document.getElementById('h-welcome').innerText = dict[l].w;
-            document.getElementById('h-desc').innerText = dict[l].d;
-            document.getElementById('h-btn').innerText = dict[l].s;
-            document.getElementById('t-title').innerText = dict[l].t;
-            document.getElementById('t-name').innerText = dict[l].tn;
-            document.getElementById('l-home').innerText = dict[l].h;
-            document.getElementById('l-tasks').innerText = dict[l].t;
-            document.getElementById('l-profile').innerText = dict[l].p;
-        }
-
-        function switchTab(t) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('tab-'+t).classList.add('active');
-            document.getElementById('n-'+t).classList.add('active');
-        }
-
-        function doTask() {
-            tg.openTelegramLink("https://t.me/RealProfitVault");
-            setTimeout(() => { balance = parseInt(balance)+100; update(); }, 2000);
-        }
-
-        function update() {
-            document.getElementById('balance').innerText = balance;
-            localStorage.setItem('bal', balance);
-            document.getElementById('u-name').innerText = tg.initDataUnsafe.user.first_name;
-            document.getElementById('u-init').innerText = tg.initDataUnsafe.user.first_name[0];
-        }
-
-        setLang(lang); update();
-    </script>
-</body>
-</html>
+        <div id="tab-refer" class="tab-content">
+            <h3>👥 Referral Program</h3>
+            <div class="card" style="text-align: center;">
+                <h4 style="color: var(--accent);">Your Referral Link:</h4>
+                <p
