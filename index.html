@@ -5,219 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* الألوان الأساسية والتصميم العام (Dark Mode like ExoTap) */
         :root {
             --bg-color: #0c0d10;
             --card-bg: #16171d;
             --text-color: #ffffff;
-            --accent-color: #f7b500; /* اللون الأصفر الذهبي */
+            --accent-color: #f7b500;
             --sub-text: #8b8e9b;
         }
 
-        body { background: var(--bg-color); color: var(--text-color); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; padding-bottom: 70px; overflow-x: hidden; }
+        body { background: var(--bg-color); color: var(--text-color); font-family: sans-serif; margin: 0; padding-bottom: 80px; }
         .container { padding: 15px; }
 
-        /* شريط الحساب العلوي (Top Profile Bar) */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--card-bg); border-bottom: 1px solid #2a2c35; }
-        .profile-info { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; background: #2a2c35; overflow: hidden; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; color: var(--accent-color); border: 2px solid var(--accent-color); }
-        .user-meta { display: flex; flex-direction: column; }
-        .user-name { font-weight: bold; font-size: 14px; }
-        .user-id { font-size: 11px; color: var(--sub-text); }
-        .coins-display { background: rgba(247, 181, 0, 0.1); border: 1px solid var(--accent-color); padding: 5px 12px; border-radius: 20px; color: var(--accent-color); font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 5px; }
-
-        /* البطاقات الكبيرة (Large Info Cards like Epoch Points) */
-        .info-card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid #2a2c35; }
-        .card-subtitle { color: var(--accent-color); text-transform: uppercase; font-size: 11px; font-weight: bold; letter-spacing: 1px; margin-bottom: 8px; }
-        .card-title { font-size: 20px; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
-        .card-desc { color: var(--sub-text); font-size: 13px; line-height: 1.5; }
-
-        /* أزرار الإجراءات الوسطى (Middle Quick Actions) */
-        .action-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
-        .action-btn { background: var(--card-bg); border: 1px solid #2a2c35; border-radius: 12px; padding: 15px 10px; text-align: center; color: var(--text-color); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
-        .action-icon { font-size: 20px; color: var(--accent-color); }
-
-        /* شريط التنقل السفلي (Bottom Navigation Tab Bar) */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--card-bg); border-top: 1px solid #2a2c35; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--sub-text); gap: 4px; cursor: pointer; flex: 1; padding: 10px; }
-        .nav-item.active { color: var(--accent-color); }
-        .nav-icon { font-size: 22px; }
-        .nav-label { font-size: 11px; font-weight: 600; }
-
-        /* الصفحات المختلفة (Tabs Content) */
+        /* الأقسام المخفية */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* تصميم القوائم (Leaderboard & Tasks like lists) */
-        .list-item { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid #2a2c35; display: flex; justify-content: space-between; align-items: center; }
-        .item-leads { display: flex; align-items: center; gap: 12px; }
-        .rank { font-size: 18px; font-weight: bold; color: var(--accent-color); width: 25px; text-align: center; }
-        .item-title { font-weight: 600; font-size: 14px; }
-        .item-subtitle { font-size: 12px; color: var(--sub-text); }
-        .item-value { font-weight: bold; color: var(--accent-color); font-size: 14px; display: flex; align-items: center; gap: 4px; }
-        
-        button.task-check { background: var(--accent-color); color: #000; border: none; padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .referral-link-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px dashed #444; font-size: 12px; color: var(--sub-text); margin: 10px 0; word-break: break-all; }
+        /* شريط علوي */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--card-bg); border-bottom: 1px solid #2a2c35; }
+        .profile-small { display: flex; align-items: center; gap: 10px; }
+        .avatar-sm { width: 35px; height: 35px; border-radius: 50%; background: var(--accent-color); color: #000; display: flex; justify-content: center; align-items: center; font-weight: bold; }
+        .coins-pill { background: rgba(247, 181, 0, 0.1); border: 1px solid var(--accent-color); padding: 4px 12px; border-radius: 20px; color: var(--accent-color); font-weight: bold; }
 
+        /* تصميم صفحة الحساب (Profile Page) */
+        .profile-header { text-align: center; padding: 30px 0; background: linear-gradient(to bottom, #16171d, #0c0d10); }
+        .avatar-lg { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--accent-color); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 40px; background: #2a2c35; }
+        .user-full-name { font-size: 22px; font-weight: bold; margin-bottom: 5px; }
+        .user-handle { color: var(--sub-text); font-size: 14px; margin-bottom: 20px; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid #2a2c35; text-align: center; }
+        .stat-value { color: var(--accent-color); font-size: 18px; font-weight: bold; }
+        .stat-label { color: var(--sub-text); font-size: 11px; margin-top: 5px; }
+
+        /* تصميم البطاقات والقوائم */
+        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid #2a2c35; }
+        .list-item { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #2a2c35; display: flex; align-items: center; justify-content: space-between; }
+        
+        /* شريط التنقل */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--card-bg); border-top: 1px solid #2a2c35; display: flex; justify-content: space-around; align-items: center; }
+        .nav-item { color: var(--sub-text); display: flex; flex-direction: column; align-items: center; font-size: 11px; cursor: pointer; flex: 1; }
+        .nav-item.active { color: var(--accent-color); }
+        .nav-icon { font-size: 20px; margin-bottom: 4px; }
+
+        button { background: var(--accent-color); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <div class="profile-info">
-            <div class="avatar" id="user-avatar">A</div>
-            <div class="user-meta">
-                <span class="user-name" id="top-username">المستخدم</span>
-                <span class="user-id" id="top-userid">ID: 000000</span>
-            </div>
-        </div>
-        <div class="coins-display">
-            <span>💰</span>
-            <span id="top-balance">0</span>
-        </div>
-    </div>
-
-    <div class="container">
-
-        <div id="tab-home" class="tab-content active">
-            <div class="info-card">
-                <div class="card-subtitle">المهام النشطة 🟢</div>
-                <div class="card-title">نقاط booster المحدودة</div>
-                <p class="card-desc">اجمع النقاط الآن قبل انتهاء الوقت! حوّل نقاطك إلى مكافآت حقيقية في أي وقت.</p>
-            </div>
-
-            <div class="action-row">
-                <div class="action-btn" onclick="switchTab('refer')">
-                    <span class="action-icon">👥</span>
-                    <span>دعوة</span>
-                </div>
-                <div class="action-btn" onclick="tg.showAlert('ميزة التحويل قريباً!')">
-                    <span class="action-icon">🔄</span>
-                    <span>تحويل</span>
-                </div>
-                <div class="action-btn" onclick="withdraw()">
-                    <span class="action-icon">💳</span>
-                    <span>سحب</span>
-                </div>
-            </div>
-
-            <h4>🏆 صدارة المستخدمين</h4>
-            <div class="list-item">
-                <div class="item-leads">
-                    <div class="rank">#1</div>
-                    <div class="avatar" style="width:35px; height:35px;">T</div>
-                    <div class="item-meta">
-                        <div class="item-title">Tamim OWNER</div>
-                        <div class="item-subtitle">أعلى جامع نقاط</div>
-                    </div>
-                </div>
-                <div class="item-value">100000 B</div>
-            </div>
-        </div>
-
-        <div id="tab-tasks" class="tab-content">
-            <h3>📋 قائمة المهام</h3>
-            <p style="color: var(--sub-text); font-size:13px; margin-bottom:20px;">أكمل المهام للحصول على مكافآت فورية.</p>
-            
-            <div class="list-item">
-                <div class="item-leads">
-                    <span style="font-size:24px;">🚀</span>
-                    <div class="item-meta">
-                        <div class="item-title">اشترك في القناة</div>
-                        <div class="item-subtitle">+100 نقطة</div>
-                    </div>
-                </div>
-                <button class="task-check" onclick="doTask()">Check</button>
-            </div>
-        </div>
-
-        <div id="tab-refer" class="tab-content">
-            <div class="info-card" style="text-align:center;">
-                <span style="font-size:40px; color:var(--accent-color);">🎁</span>
-                <div class="card-title">ادعُ أصدقاءك واحصل على مكافأة!</div>
-                <p class="card-desc">احصل على 500 نقطة كهدية عن كل صديق يقوم بالتسجيل من رابطك.</p>
-            </div>
-            
-            <h4>رابط الدعوة الخاص بك</h4>
-            <div class="referral-link-box" id="ref-link">جاري توليد الرابط...</div>
-            <button onclick="shareInvite()">نسخ ومشاركة الرابط 🔗</button>
-        </div>
-
-    </div>
-
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home')" id="nav-home">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">الرئيسية</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('tasks')" id="nav-tasks">
-            <span class="nav-icon">📋</span>
-            <span class="nav-label">المهام</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('refer')" id="nav-refer">
-            <span class="nav-icon">👥</span>
-            <span class="nav-label">الإحالة</span>
-        </div>
-    </div>
-
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.backgroundColor = "#0c0d10";
-        tg.headerColor = "#16171d";
-
-        // جلب بيانات المستخدم وعرضها في الشريط العلوي
-        let user = tg.initDataUnsafe.user;
-        document.getElementById('top-username').innerText = user.first_name;
-        document.getElementById('top-userid').innerText = "ID: " + user.id;
-        document.getElementById('user-avatar').innerText = user.first_name[0]; // الحرف الأول
-
-        // إدارة الرصيد
-        let balance = localStorage.getItem('userBalance') || 0;
-        updateBalanceDisplay();
-
-        // توليد رابط الإحالة
-        let inviteLink = "https://t.me/" + tg.initDataUnsafe.bot.username + "/app?startapp=ref" + user.id;
-        document.getElementById('ref-link').innerText = inviteLink;
-
-        // دالة التنقل بين الألسنة (Tabs)
-        function switchTab(tabName) {
-            // إخفاء كل المحتوى
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-
-            // إظهار المحتوى المختار
-            document.getElementById('tab-' + tabName).classList.add('active');
-            document.getElementById('nav-' + tabName).classList.add('active');
-            tg.HapticFeedback.impactOccurred('light');
-        }
-
-        function doTask() {
-            tg.openTelegramLink("https://t.me/RealProfitVault");
-            setTimeout(() => {
-                balance = parseInt(balance) + 100;
-                updateBalanceDisplay();
-                tg.showAlert("✅ تم التحقق وإضافة 100 نقطة!");
-            }, 2000);
-        }
-
-        function shareInvite() {
-            let shareUrl = "https://t.me/share/url?url=" + encodeURIComponent(inviteLink) + "&text=" + encodeURIComponent("اشترك في هذا البوت واربح مكافآت ذهبية! 💰🚀");
-            tg.openTelegramLink(shareUrl);
-        }
-
-        function withdraw() {
-            if(balance < 5000) {
-                tg.showPopup({ title: "عذراً", message: "يجب أن يكون رصيدك 5,000 نقطة على الأقل للسحب.", buttons: [{type: "ok"}] });
-            } else {
-                tg.showAlert("📩 تم إرسال طلب السحب للإدارة، سيتم مراجعته قريباً.");
-            }
-        }
-
-        function updateBalanceDisplay() {
-            document.getElementById('top-balance').innerText = balance;
-            localStorage.setItem('userBalance', balance);
-        }
-    </script>
-</body>
-</html>
+    <div id="top-info-bar" class="top-bar">
+        <div class="profile-small">
+            <div class="avatar-sm" id="sm-avatar">?</div>
+            <span id="sm-username" style="font-size: 14px; font
